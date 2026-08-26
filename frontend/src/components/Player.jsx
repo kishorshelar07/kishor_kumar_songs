@@ -67,12 +67,15 @@ export default function Player({ song, isPlaying, onPlayPause, onNext, onPrev, o
         onEnded={onEnded}
       />
 
-      <div className={`cover-wrap${isPlaying ? ' spinning' : ''}`}>
-        {coverUrl ? (
-          <img src={coverUrl} alt={song.title} className="cover-img" />
-        ) : (
-          <div className="cover-placeholder">🎵</div>
-        )}
+      <div className="record-stage">
+        <div className={`cover-wrap${isPlaying ? ' spinning' : ''}`}>
+          {coverUrl ? (
+            <img src={coverUrl} alt={song.title} className="cover-img" />
+          ) : (
+            <div className="cover-placeholder">🎵</div>
+          )}
+          <div className="cover-gloss" />
+        </div>
       </div>
 
       <h2 className="now-title">{song.title}</h2>

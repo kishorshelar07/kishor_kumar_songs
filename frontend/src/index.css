@@ -62,19 +62,12 @@ html, body, #root {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 2rem 1rem;
+  padding: 5.5rem 1rem 2rem;
   text-align: center;
-  gap: 2rem;
+  gap: 1.5rem;
 }
 
-.site-header {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.4rem;
-}
-
-.site-header .eyebrow {
+.eyebrow {
   font-size: 0.75rem;
   letter-spacing: 6px;
   text-transform: uppercase;
@@ -82,22 +75,137 @@ html, body, #root {
   opacity: 0.85;
 }
 
-.site-header h1 {
-  font-size: clamp(2.2rem, 7vw, 4rem);
-  letter-spacing: 4px;
-  background: linear-gradient(180deg, #f6d98a 0%, #d9a54a 55%, #a9701f 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  text-shadow: 0 2px 20px rgba(0, 0, 0, 0.6);
-  font-weight: 400;
-}
-
-.site-header .rule {
+.rule {
   width: 90px;
   height: 1px;
   background: linear-gradient(90deg, transparent, #d9a54a, transparent);
-  margin-top: 0.3rem;
+  margin: 0.2rem auto 0;
+}
+
+/* ---------- Navbar ---------- */
+
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.75rem;
+  background: rgba(10, 6, 3, 0.55);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(217, 165, 74, 0.15);
+}
+
+.navbar-centered {
+  justify-content: center;
+}
+
+.navbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #f6d98a;
+  font-size: 1.05rem;
+  letter-spacing: 2px;
+  text-decoration: none;
+  font-family: 'Georgia', serif;
+}
+
+.navbar-note {
+  color: #d9a54a;
+  font-size: 3.1rem;
+}
+
+.navbar-admin-link {
+  color: #b8925a;
+  font-size: 0.75rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  text-decoration: none;
+  border: 1px solid rgba(217, 165, 74, 0.3);
+  padding: 0.35rem 0.9rem;
+  border-radius: 20px;
+  opacity: 0.75;
+  transition: opacity 0.15s ease, border-color 0.15s ease;
+}
+
+.navbar-admin-link:hover {
+  opacity: 1;
+  border-color: rgba(217, 165, 74, 0.7);
+}
+
+/* ---------- Floating decorative layer (depth, no real photos) ---------- */
+
+.floating-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(50px);
+  opacity: 0.5;
+  animation: floatOrb 14s ease-in-out infinite;
+}
+
+.orb-1 {
+  width: 260px;
+  height: 260px;
+  top: 8%;
+  left: 8%;
+  background: radial-gradient(circle, rgba(217, 165, 74, 0.35), transparent 70%);
+  animation-duration: 16s;
+}
+
+.orb-2 {
+  width: 320px;
+  height: 320px;
+  bottom: 5%;
+  right: 5%;
+  background: radial-gradient(circle, rgba(169, 112, 31, 0.3), transparent 70%);
+  animation-duration: 20s;
+  animation-delay: -4s;
+}
+
+.orb-3 {
+  width: 180px;
+  height: 180px;
+  top: 55%;
+  left: 70%;
+  background: radial-gradient(circle, rgba(246, 217, 138, 0.25), transparent 70%);
+  animation-duration: 12s;
+  animation-delay: -2s;
+}
+
+@keyframes floatOrb {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(20px, -30px) scale(1.08); }
+}
+
+.note {
+  position: absolute;
+  color: rgba(217, 165, 74, 0.35);
+  font-size: 1.5rem;
+  animation: floatNote 10s ease-in infinite;
+}
+
+.note-1 { left: 12%; bottom: -10%; animation-duration: 11s; }
+.note-2 { left: 85%; bottom: -10%; font-size: 1.1rem; animation-duration: 13s; animation-delay: -3s; }
+.note-3 { left: 45%; bottom: -10%; font-size: 1.8rem; animation-duration: 15s; animation-delay: -7s; }
+.note-4 { left: 65%; bottom: -10%; font-size: 1rem; animation-duration: 9s; animation-delay: -1s; }
+
+@keyframes floatNote {
+  0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+  10% { opacity: 0.5; }
+  90% { opacity: 0.4; }
+  100% { transform: translateY(-100vh) rotate(25deg); opacity: 0; }
 }
 
 .minimal-player-wrap {
@@ -114,50 +222,59 @@ html, body, #root {
   max-width: 320px;
 }
 
+.record-stage {
+  perspective: 900px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .cover-wrap {
   position: relative;
   width: 220px;
   height: 220px;
   border-radius: 50%;
   overflow: hidden;
+  transform: rotateX(18deg);
+  transform-style: preserve-3d;
+  cursor: default;
   box-shadow:
-    0 10px 40px rgba(0, 0, 0, 0.6),
-    0 0 0 6px #0a0603,
-    0 0 0 8px rgba(217, 165, 74, 0.5);
-  cursor: pointer;
-  transition: transform 0.4s ease;
+    0 22px 45px rgba(0, 0, 0, 0.65),
+    0 0 0 4px #0a0603,
+    0 0 0 6px rgba(217, 165, 74, 0.55),
+    0 0 0 11px #0a0603,
+    0 0 0 13px rgba(217, 165, 74, 0.18),
+    0 0 0 20px #0a0603,
+    0 0 0 21px rgba(217, 165, 74, 0.08);
+  transition: transform 0.5s ease;
 }
 
 .cover-wrap.spinning {
-  animation: spin 12s linear infinite;
+  animation: spin3d 14s linear infinite;
 }
 
-@keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+@keyframes spin3d {
+  from { transform: rotateX(18deg) rotateZ(0deg); }
+  to   { transform: rotateX(18deg) rotateZ(360deg); }
 }
 
-.cover-wrap::after {
-  content: '';
+/* Soft diagonal gloss sheen that rotates with the record — replaces the
+   old flat black center dot with something that actually looks like light
+   hitting a vinyl surface. */
+.cover-gloss {
   position: absolute;
   inset: 0;
   border-radius: 50%;
-  box-shadow: inset 0 0 0 2px rgba(0, 0, 0, 0.4);
-  pointer-events: none;
-}
-
-.cover-wrap::before {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 18px;
-  height: 18px;
-  background: #0a0603;
-  border: 2px solid #d9a54a;
-  border-radius: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 2;
+  background: linear-gradient(
+    115deg,
+    rgba(255, 255, 255, 0.28) 0%,
+    rgba(255, 255, 255, 0.05) 18%,
+    transparent 35%,
+    transparent 65%,
+    rgba(255, 255, 255, 0.1) 82%,
+    rgba(255, 255, 255, 0.02) 100%
+  );
+  mix-blend-mode: screen;
   pointer-events: none;
 }
 
@@ -181,7 +298,7 @@ html, body, #root {
 .now-title {
   font-size: 1.3rem;
   color: #f6d98a;
-  margin-top: 0.5rem;
+  margin-top: 1.4rem;
   letter-spacing: 1px;
 }
 

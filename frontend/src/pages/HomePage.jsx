@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import api from '../api.js';
 import Player from '../components/Player.jsx';
+import Navbar from '../components/Navbar.jsx';
 
 // Fisher-Yates shuffle so the auto-play order isn't fixed every visit
 function shuffle(arr) {
@@ -56,12 +57,23 @@ export default function HomePage() {
   return (
     <div className="app-bg">
       <div className="overlay" />
+
+      {/* Decorative floating orbs + drifting notes for depth */}
+      <div className="floating-layer" aria-hidden="true">
+        <span className="orb orb-1" />
+        <span className="orb orb-2" />
+        <span className="orb orb-3" />
+        <span className="note note-1">♪</span>
+        <span className="note note-2">♫</span>
+        <span className="note note-3">♪</span>
+        <span className="note note-4">♫</span>
+      </div>
+
+      <Navbar />
+
       <div className="content">
-        <header className="site-header">
-          <span className="eyebrow">The Golden Voice</span>
-          <h1>Kishore Kumar</h1>
-          <div className="rule" />
-        </header>
+        <span className="eyebrow">The Golden Voice</span>
+        <div className="rule" />
 
         <main className="minimal-player-wrap">
           <Player
