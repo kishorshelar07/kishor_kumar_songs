@@ -1,6 +1,5 @@
 import React, { useRef, useEffect, useState } from 'react';
-
-const API_BASE = '';
+import { API_BASE } from '../api.js';
 
 function formatTime(sec) {
   if (!sec || isNaN(sec)) return '0:00';

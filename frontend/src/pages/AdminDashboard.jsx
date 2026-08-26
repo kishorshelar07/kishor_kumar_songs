@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import api from '../api.js';
 import { useNavigate } from 'react-router-dom';
 
 export default function AdminDashboard() {
@@ -22,7 +22,7 @@ export default function AdminDashboard() {
 
   const fetchSongs = async () => {
     try {
-      const res = await axios.get('/api/songs');
+      const res = await api.get('/api/songs');
       setSongs(res.data);
     } catch (err) {
       console.error('Failed to fetch songs', err);
@@ -58,7 +58,7 @@ export default function AdminDashboard() {
 
     setUploading(true);
     try {
-      await axios.post('/api/songs', formData, {
+      await api.post('/api/songs', formData, {
         headers: { ...getAuthHeaders(), 'Content-Type': 'multipart/form-data' }
       });
       resetForm();
@@ -77,7 +77,7 @@ export default function AdminDashboard() {
   const handleDelete = async (id) => {
     if (!window.confirm('Delete this song?')) return;
     try {
-      await axios.delete(`/api/songs/${id}`, { headers: getAuthHeaders() });
+      await api.delete(`/api/songs/${id}`, { headers: getAuthHeaders() });
       fetchSongs();
     } catch (err) {
       if (err.response && err.response.status === 401) {

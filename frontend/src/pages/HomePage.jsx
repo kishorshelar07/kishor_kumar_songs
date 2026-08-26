@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import api from '../api.js';
 import Player from '../components/Player.jsx';
 
 // Fisher-Yates shuffle so the auto-play order isn't fixed every visit
@@ -23,7 +23,7 @@ export default function HomePage() {
 
   const fetchSongs = async () => {
     try {
-      const res = await axios.get('/api/songs');
+      const res = await api.get('/api/songs');
       setQueue(shuffle(res.data));
     } catch (err) {
       console.error('Failed to fetch songs', err);
