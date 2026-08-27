@@ -4,10 +4,14 @@ const songSchema = new mongoose.Schema(
   {
     title: { type: String, required: true, trim: true },
     artist: { type: String, default: 'Kishore Kumar', trim: true },
-    // filename of the mp3 inside backend/uploads/songs
+    // Full Cloudinary URL for the audio file
     audioFile: { type: String, required: true },
-    // filename of the cover image inside backend/uploads/covers (optional)
+    // Cloudinary public_id for the audio file, needed to delete it later
+    audioPublicId: { type: String, default: '' },
+    // Full Cloudinary URL for the cover image (optional)
     coverImage: { type: String, default: '' },
+    // Cloudinary public_id for the cover image, needed to delete it later
+    coverPublicId: { type: String, default: '' },
     order: { type: Number, default: 0 }
   },
   { timestamps: true }

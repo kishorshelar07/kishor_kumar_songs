@@ -1,31 +1,38 @@
 const express = require('express');
 const multer = require('multer');
-const path = require('path');
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
+const cloudinary = require('../config/cloudinary');
 const Song = require('../models/Song');
 const requireAdmin = require('../middleware/auth');
 
 const router = express.Router();
 
-// Storage config: audio -> uploads/songs, cover -> uploads/covers
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
+// Files now go straight to Cloudinary instead of local disk — this means
+// songs survive Render restarts/redeploys instead of disappearing.
+const storage = new CloudinaryStorage({
+  cloudinary,
+  params: async (req, file) => {
     if (file.fieldname === 'audio') {
-      cb(null, path.join(__dirname, '..', 'uploads', 'songs'));
-    } else if (file.fieldname === 'cover') {
-      cb(null, path.join(__dirname, '..', 'uploads', 'covers'));
-    } else {
-      cb(new Error('Unknown field'), null);
+      return {
+        folder: 'kishore-kumar-player/songs',
+        resource_type: 'video', // Cloudinary stores audio under "video"
+        allowed_formats: ['mp3', 'wav', 'm4a', 'ogg']
+      };
     }
-  },
-  filename: function (req, file, cb) {
-    const unique = Date.now() + '-' + file.originalname.replace(/\s+/g, '_');
-    cb(null, unique);
+    if (file.fieldname === 'cover') {
+      return {
+        folder: 'kishore-kumar-player/covers',
+        resource_type: 'image',
+        allowed_formats: ['jpg', 'jpeg', 'png', 'webp']
+      };
+    }
+    return { folder: 'kishore-kumar-player/misc' };
   }
 });
 
 const upload = multer({ storage });
 
-// GET all songs, sorted by order then title
+// GET all songs, sorted by order then title — public, no login needed
 router.get('/', async (req, res) => {
   try {
     const songs = await Song.find().sort({ order: 1, title: 1 });
@@ -45,11 +52,17 @@ router.post('/', requireAdmin, upload.fields([{ name: 'audio', maxCount: 1 }, { 
     if (!title || !title.trim()) {
       return res.status(400).json({ error: 'Title is required' });
     }
+
+    const audioFile = req.files.audio[0];
+    const coverFile = req.files.cover ? req.files.cover[0] : null;
+
     const song = new Song({
       title,
       artist: artist || 'Kishore Kumar',
-      audioFile: req.files.audio[0].filename,
-      coverImage: req.files.cover ? req.files.cover[0].filename : '',
+      audioFile: audioFile.path, // full Cloudinary URL
+      audioPublicId: audioFile.filename, // Cloudinary public_id, needed to delete later
+      coverImage: coverFile ? coverFile.path : '',
+      coverPublicId: coverFile ? coverFile.filename : '',
       order: order ? Number(order) : 0
     });
     await song.save();
@@ -59,9 +72,22 @@ router.post('/', requireAdmin, upload.fields([{ name: 'audio', maxCount: 1 }, { 
   }
 });
 
-// DELETE a song by id (metadata only; files remain on disk) — admin only
+// DELETE a song by id — admin only. Removes both the database entry and
+// the actual files on Cloudinary, so nothing is left orphaned.
 router.delete('/:id', requireAdmin, async (req, res) => {
   try {
+    const song = await Song.findById(req.params.id);
+    if (!song) {
+      return res.status(404).json({ error: 'Song not found' });
+    }
+
+    if (song.audioPublicId) {
+      await cloudinary.uploader.destroy(song.audioPublicId, { resource_type: 'video' });
+    }
+    if (song.coverPublicId) {
+      await cloudinary.uploader.destroy(song.coverPublicId, { resource_type: 'image' });
+    }
+
     await Song.findByIdAndDelete(req.params.id);
     res.json({ message: 'Deleted' });
   } catch (err) {
