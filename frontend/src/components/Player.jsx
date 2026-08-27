@@ -1,5 +1,4 @@
 import React, { useRef, useEffect, useState } from 'react';
-import { API_BASE } from '../api.js';
 
 function formatTime(sec) {
   if (!sec || isNaN(sec)) return '0:00';
@@ -52,10 +51,8 @@ export default function Player({ song, isPlaying, onPlayPause, onNext, onPrev, o
     );
   }
 
-  const coverUrl = song.coverImage
-    ? `${API_BASE}/uploads/covers/${song.coverImage}`
-    : null;
-  const audioUrl = `${API_BASE}/uploads/songs/${song.audioFile}`;
+  const coverUrl = song.coverImage || null;
+  const audioUrl = song.audioFile;
 
   return (
     <div className="player-minimal">
