@@ -72,8 +72,10 @@ router.post('/', requireAdmin, upload.fields([{ name: 'audio', maxCount: 1 }, { 
   }
 });
 
-// DELETE a song by id — admin only. Removes both the database entry and
-// the actual files on Cloudinary, so nothing is left orphaned.
+// DELETE a song by id — admin only. Always removes the database entry;
+// also tries to clean up the files on Cloudinary, but a Cloudinary error
+// (stale public_id, already-deleted file, etc.) never blocks the delete —
+// the song still disappears from the list either way.
 router.delete('/:id', requireAdmin, async (req, res) => {
   try {
     const song = await Song.findById(req.params.id);
@@ -82,10 +84,18 @@ router.delete('/:id', requireAdmin, async (req, res) => {
     }
 
     if (song.audioPublicId) {
-      await cloudinary.uploader.destroy(song.audioPublicId, { resource_type: 'video' });
+      try {
+        await cloudinary.uploader.destroy(song.audioPublicId, { resource_type: 'video' });
+      } catch (cloudErr) {
+        console.error('Cloudinary audio delete failed (continuing anyway):', cloudErr.message);
+      }
     }
     if (song.coverPublicId) {
-      await cloudinary.uploader.destroy(song.coverPublicId, { resource_type: 'image' });
+      try {
+        await cloudinary.uploader.destroy(song.coverPublicId, { resource_type: 'image' });
+      } catch (cloudErr) {
+        console.error('Cloudinary cover delete failed (continuing anyway):', cloudErr.message);
+      }
     }
 
     await Song.findByIdAndDelete(req.params.id);
