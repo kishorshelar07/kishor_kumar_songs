@@ -10,11 +10,11 @@ they show up automatically in the player and song list.
 kishore-kumar-mern/
 ├── backend/
 │   ├── config/db.js
+│   ├── config/cloudinary.js
+│   ├── middleware/auth.js
 │   ├── models/Song.js
 │   ├── routes/songs.js
-│   ├── uploads/
-│   │   ├── songs/    <- mp3 files get stored here
-│   │   └── covers/   <- cover images get stored here
+│   ├── routes/admin.js
 │   ├── server.js
 │   ├── package.json
 │   └── .env.example
@@ -67,6 +67,22 @@ frontend/public/kishore-bg.jpg
 The full-screen background is already wired to this file — just drop it in
 and refresh.
 
+## 4. Cloudinary setup (required — this is where songs/covers are stored)
+
+1. Create a free account at cloudinary.com
+2. From your Dashboard, copy: Cloud Name, API Key, API Secret
+3. Add them to `backend/.env`:
+   ```
+   CLOUDINARY_CLOUD_NAME=your_cloud_name
+   CLOUDINARY_API_KEY=your_api_key
+   CLOUDINARY_API_SECRET=your_api_secret
+   ```
+4. Restart the backend
+
+Every song/cover uploaded through the admin panel now goes straight to
+Cloudinary and stays there — Render restarting or redeploying won't
+delete them anymore.
+
 ## 5. Admin panel — add/delete songs (password protected)
 
 Regular visitors only see the player at `/` — they cannot add or delete
@@ -95,9 +111,10 @@ The admin session is stored as a token in the browser; "Logout" clears it.
 
 ## 7. Deploying later (optional)
 
-- Backend: deploy to Render/Railway, point `MONGO_URI` at MongoDB Atlas,
-  and make sure `uploads/` is on persistent storage (or switch to S3/Cloudinary
-  storage in `routes/songs.js` if the host wipes the filesystem on redeploy).
+- Backend: deploy to Render/Railway, point `MONGO_URI` at MongoDB Atlas.
+  Songs/covers are stored on Cloudinary (see step 5 below), so no
+  persistent disk is needed on the host — this also means Render's free
+  tier restarts/sleeps no longer wipe your songs.
 - Frontend: `npm run build` in `frontend/`, deploy the `dist/` folder to
   Vercel/Netlify, and update the API base URL/proxy for production.
 

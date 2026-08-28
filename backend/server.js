@@ -9,11 +9,21 @@ const app = express();
 
 connectDB();
 
-app.use(cors());
+// Restrict CORS to your deployed frontend when FRONTEND_URL is set (e.g. on
+// Render). Falls back to allowing all origins for local development.
+const allowedOrigin = process.env.FRONTEND_URL;
+app.use(
+  cors(
+    allowedOrigin
+      ? { origin: allowedOrigin }
+      : {} // no restriction — fine for local dev
+  )
+);
+
 app.use(express.json());
 
-// Audio/cover files now live on Cloudinary, so no local static file
-// serving or upload-folder setup is needed anymore.
+// Audio/cover files live on Cloudinary, so no local static file serving or
+// upload-folder setup is needed.
 app.use('/api/songs', songsRouter);
 app.use('/api/admin', adminRouter);
 

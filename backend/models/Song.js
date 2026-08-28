@@ -8,10 +8,14 @@ const songSchema = new mongoose.Schema(
     audioFile: { type: String, required: true },
     // Cloudinary public_id for the audio file, needed to delete it later
     audioPublicId: { type: String, default: '' },
-    // Full Cloudinary URL for the cover image (optional)
+    // Full URL for the cover image (Cloudinary upload OR an auto-fetched
+    // external artwork URL — coverPublicId stays blank for the latter)
     coverImage: { type: String, default: '' },
-    // Cloudinary public_id for the cover image, needed to delete it later
     coverPublicId: { type: String, default: '' },
+    // Free-text tag for grouping — e.g. "Romantic", "Sad", "70s Classics"
+    category: { type: String, default: '', trim: true },
+    // Optional plain-text lyrics, admin-entered
+    lyrics: { type: String, default: '' },
     order: { type: Number, default: 0 }
   },
   { timestamps: true }
