@@ -10,6 +10,19 @@ const api = axios.create({
   baseURL: API_BASE
 });
 
+// Automatically attach the admin token (if present) to every request, so
+// individual pages never need to build the Authorization header themselves.
+// Without this, every admin action (add/edit/delete/reorder) would go out
+// unauthenticated and the backend would reject it.
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem('admin_token');
+  if (token) {
+    config.headers = config.headers || {};
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
 // If the admin token is missing/expired/invalid, the backend replies 401.
 // Auto-clear it and bounce to the login page so a stale session never just
 // silently fails on every click.

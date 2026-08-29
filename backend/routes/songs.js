@@ -123,7 +123,7 @@ router.post('/', requireAdmin, upload.fields([{ name: 'audio', maxCount: 1 }, { 
 // POST /api/songs/bulk — upload many mp3s at once. Titles are derived from
 // each file's name; artist/category apply to the whole batch. No per-song
 // cover here — add/edit one at a time afterwards if you want custom art.
-router.post('/bulk', requireAdmin, upload.array('audios', 20), async (req, res) => {
+router.post('/bulk', requireAdmin, upload.array('audios', 50), async (req, res) => {
   try {
     if (!req.files || req.files.length === 0) {
       return res.status(400).json({ error: 'At least one audio file is required' });

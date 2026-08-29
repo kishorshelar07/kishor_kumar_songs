@@ -123,7 +123,6 @@ export default function AdminDashboard() {
     setUploadProgress(0);
     try {
       await api.post('/api/songs', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
         onUploadProgress: (evt) => {
           if (evt.total) {
             setUploadProgress(Math.round((evt.loaded / evt.total) * 100));
@@ -157,7 +156,6 @@ export default function AdminDashboard() {
     setBulkProgress(0);
     try {
       const res = await api.post('/api/songs/bulk', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
         onUploadProgress: (evt) => {
           if (evt.total) {
             setBulkProgress(Math.round((evt.loaded / evt.total) * 100));
@@ -215,9 +213,7 @@ export default function AdminDashboard() {
 
     setEditSaving(true);
     try {
-      await api.put(`/api/songs/${editingSong._id}`, formData, {
-        headers: { 'Content-Type': 'multipart/form-data' }
-      });
+      await api.put(`/api/songs/${editingSong._id}`, formData);
       closeEdit();
       fetchSongs();
     } catch (err) {
